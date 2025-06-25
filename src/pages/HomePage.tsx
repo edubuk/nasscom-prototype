@@ -125,24 +125,39 @@ const HomePage = () => {
             </div>
             <div className="flex flex-col gap-5">
               <h1>Select your topic</h1>
-              <div className=" flex flex-wrap gap-5">
-                {topics.map((topic, i) => (
-                  <div
-                    key={i}
-                    onClick={() => {
-                      setSelectedTopic(topic);
-                      form.setValue("topic", topic);
-                    }}
-                    className={twMerge(
-                      "max-w-44 w-full h-16 p-2 flex items-center justify-center border rounded-lg hover:bg-zinc-100/50 cursor-pointer",
-                      topic === selectedTopic &&
-                        "bg-green-500/10 border-green-500 hover:bg-green-500/10"
-                    )}
-                  >
-                    {topic}
-                  </div>
-                ))}
-              </div>
+              <FormField
+                control={form.control}
+                name="topic"
+                render={() => (
+                  <FormItem className="flex-1">
+                    <FormLabel>
+                      Topic <span className="text-red-500"> *</span>
+                    </FormLabel>
+                    <FormControl>
+                      <div className=" flex flex-wrap gap-5">
+                        {topics.map((topic, i) => (
+                          <div
+                            key={i}
+                            onClick={() => {
+                              setSelectedTopic(topic);
+                              form.setValue("topic", topic);
+                            }}
+                            className={twMerge(
+                              "max-w-44 w-full h-16 p-2 flex items-center justify-center border rounded-lg hover:bg-zinc-100/50 cursor-pointer",
+                              topic === selectedTopic &&
+                                "bg-green-500/10 border-green-500 hover:bg-green-500/10"
+                            )}
+                          >
+                            {topic}
+                          </div>
+                        ))}
+                      </div>
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <div className="px-20">
