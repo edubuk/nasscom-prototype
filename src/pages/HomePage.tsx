@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-
+import Test from "./Test"
 const formSchema = z.object({
   name: z.string({
     required_error: "Name is required",
@@ -171,6 +171,7 @@ const HomePage = () => {
           </form>
         </Form>
       </div>
+      <Test />
     </div>
   );
 };
