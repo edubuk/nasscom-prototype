@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import Test from "./Test"
+import AddCertToLinkedIn from "./AddCertToLinkedIn";
 const formSchema = z.object({
   name: z.string({
     required_error: "Name is required",
@@ -171,7 +171,14 @@ const HomePage = () => {
           </form>
         </Form>
       </div>
-      <Test />
+      <AddCertToLinkedIn
+  certName="Zero Trust Security Fundamentals"
+  organizationId={82553446}
+  issueYear={2024}
+  issueMonth={6}
+  certUrl="https://trucvstorage.blob.core.windows.net/uploads/0d632c162012e48f177071abcd37f8151771f55d4a357d3ce14e41268814cdee_1750752487.pdf"
+  certId={7890}
+/>
     </div>
   );
 };
