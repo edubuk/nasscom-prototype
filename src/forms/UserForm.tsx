@@ -72,7 +72,7 @@ const UserForm = ({
       {/* form component */}
       <Form {...form}>
         <form className="space-y-8 mt-9">
-          <div className="flex gap-5">
+          <div className="flex flex-col md:flex-row gap-5">
             <FormField
               control={form.control}
               name="name"
@@ -139,7 +139,7 @@ const UserForm = ({
                     Topic <span className="text-red-500"> *</span>
                   </FormLabel>
                   <FormControl>
-                    <div className=" flex flex-wrap gap-5">
+                    <div className=" flex flex-wrap  gap-5 border justify-center">
                       {topics.map((topic, i) => (
                         <div
                           key={i}
@@ -148,7 +148,7 @@ const UserForm = ({
                             form.setValue("topic", topic);
                           }}
                           className={twMerge(
-                            "max-w-44 w-full h-16 p-2 flex items-center justify-center border rounded-lg hover:bg-zinc-100/50 cursor-pointer",
+                            "max-w-28 md:max-w-44 w-full h-16 p-2 flex items-center justify-center border rounded-lg hover:bg-zinc-100/50 cursor-pointer text-center",
                             topic === selectedTopic &&
                               "bg-green-500/10 border-green-500 hover:bg-green-500/10"
                           )}

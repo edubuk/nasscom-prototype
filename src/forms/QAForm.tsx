@@ -141,12 +141,12 @@ const QAForm = ({
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto md:p-6">
       <div className="my-6">
-        <h1 className="text-3xl font-bold tracking-tight mb-8">
+        <h1 className="text-xl  lg:text-3xl font-bold tracking-tight mb-8">
           Assessment Questions for {selectedTopic}
         </h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-center gap-2">
           <p className="">Select Another Topic</p>
           <SelectDropDown setSelectedTopic={setSelectedTopic} />
         </div>
@@ -171,7 +171,10 @@ const QAForm = ({
                   render={({ field }) => (
                     <FormItem className="bg-white p-4 rounded-lg border shadow-sm">
                       <FormLabel className="text-base font-medium">
-                        {index + 1}. {question.question}
+                        <span className="place-self-start md:place-self-auto">
+                          {index + 1})
+                        </span>
+                        <span className="">{question.question}</span>
                         {/* <span className="text-red-500 ml-1">*</span> */}
                       </FormLabel>
                       <FormControl>
@@ -237,7 +240,7 @@ const AssessmentResult = ({
   resetAssessment: () => void;
 }) => {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="w-full max-w-4xl mx-auto md:p-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold tracking-tight mb-4">
           Assessment Results for {selectedTopic}
