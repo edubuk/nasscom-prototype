@@ -3,6 +3,8 @@ import UserForm from "@/forms/UserForm";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import nasscomImage from "@/assets/nasscom-logo.svg";
+import AddCertToLinkedIn from "./AddCertToLinkedIn";
+
 const HomePage = () => {
   const [userFormSubmited, setUserFormSubmited] = useState<boolean>(
     JSON.parse(localStorage.getItem("userFormSubmited") || "false")
@@ -37,6 +39,14 @@ const HomePage = () => {
           <QAForm storeOnBlockchainHandler={storeOnBlockchain} />
         )}
       </div>
+      <AddCertToLinkedIn
+        certName="Zero Trust Security Fundamentals"
+        organizationId={82553446}
+        issueYear={2024}
+        issueMonth={6}
+        certUrl="https://trucvstorage.blob.core.windows.net/uploads/0d632c162012e48f177071abcd37f8151771f55d4a357d3ce14e41268814cdee_1750752487.pdf"
+        certId={7890}
+      />
     </div>
   );
 };
