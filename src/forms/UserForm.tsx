@@ -67,7 +67,7 @@ const UserForm = ({
   console.log("form values", form.getValues());
   return (
     <>
-      <h1 className="text-2xl tracking-tight">Fill up details</h1>
+      <h1 className="text-2xl tracking-tight">Fill your details</h1>
 
       {/* form component */}
       <Form {...form}>
