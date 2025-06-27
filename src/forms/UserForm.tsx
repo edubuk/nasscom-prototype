@@ -139,7 +139,7 @@ const UserForm = ({
                     Topic <span className="text-red-500"> *</span>
                   </FormLabel>
                   <FormControl>
-                    <div className=" flex flex-wrap  gap-5 border justify-center">
+                    <div className=" flex flex-wrap  gap-5  justify-center">
                       {topics.map((topic, i) => (
                         <div
                           key={i}

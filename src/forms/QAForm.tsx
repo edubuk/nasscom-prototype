@@ -309,15 +309,13 @@ const AssessmentResult = ({
           </Alert>
 
           <div className="flex justify-center space-x-4">
-            {!assessmentResult.passed && (
-              <Button
-                onClick={resetAssessment}
-                variant="outline"
-                className="px-6 py-2"
-              >
-                Retake Assessment
-              </Button>
-            )}
+            <Button
+              onClick={resetAssessment}
+              variant="outline"
+              className="px-6 py-2"
+            >
+              Retake Assessment
+            </Button>
 
             {assessmentResult.passed && (
               <Button

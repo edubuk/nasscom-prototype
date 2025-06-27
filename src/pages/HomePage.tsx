@@ -21,7 +21,7 @@ const HomePage = () => {
           className="w-28 sm:w-32 lg:w-40 object-cover"
         />
         <h1 className="text-2xl md:text-4xl lg:text-6xl tracking-tight mb-4">
-          Dev Conference ,Bangalore
+          Dev Conference Bangalore
         </h1>
       </div>
       <div
