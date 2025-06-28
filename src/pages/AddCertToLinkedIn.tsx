@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { TiSocialLinkedin } from "react-icons/ti";
 type Props = {
   certName: string;
   organizationId: number;
@@ -29,14 +31,18 @@ const AddCertToLinkedIn = ({
   }
 
   return (
-    <div>
-      <a href={url} target="_blank" rel="noopener noreferrer">
-        <img
-          src="https://download.linkedin.com/desktop/add2profile/buttons/en_US.png"
-          alt="LinkedIn Add to Profile button"
-        />
+    <Button className="border text-white  p-3 rounded-lg px-5 bg-sky-700 hover:bg-sky-600 cursor-pointer">
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full flex items-center justify-center"
+      >
+        <TiSocialLinkedin className="mr-2 size-8" />
+
+        <span className="text-lg">Add to LinkedIn</span>
       </a>
-    </div>
+    </Button>
   );
 };
 
