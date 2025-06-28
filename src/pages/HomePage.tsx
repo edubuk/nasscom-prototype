@@ -2,6 +2,8 @@ import QAForm from "@/forms/QAForm";
 import UserForm from "@/forms/UserForm";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import AddCertToLinkedIn from "./AddCertToLinkedIn";
+import RegisterOnBlockchain from "./RegisterOnBlockchain";
 
 const HomePage = () => {
   const [userFormSubmited, setUserFormSubmited] = useState<boolean>(
@@ -28,13 +30,14 @@ const HomePage = () => {
         )}
       </div>
       <AddCertToLinkedIn
-  certName="Zero Trust Security Fundamentals"
+  certName="Testing Add Profile"
   organizationId={82553446}
   issueYear={2024}
   issueMonth={6}
   certUrl="https://trucvstorage.blob.core.windows.net/uploads/0d632c162012e48f177071abcd37f8151771f55d4a357d3ce14e41268814cdee_1750752487.pdf"
   certId={7890}
 />
+<RegisterOnBlockchain />
     </div>
   );
 };
