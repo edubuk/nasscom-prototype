@@ -16,11 +16,11 @@ export const createAndUploadCert = async ({
         certificate_type: `${userFormData.topic}`,
       }),
     });
-    response = await response.blob();
-    const id = response.headers.get("id");
+    const id = await response.headers.get("id");
     if (!id) {
-      throw new Error("No ID returned in response headers");
+        return setState("Failed to generate certificate ID");
     }
+    response = await response.blob();
     const file = new File([response], "document.pdf", {
       type: "application/pdf",
     });
@@ -37,8 +37,8 @@ export const createAndUploadCert = async ({
       console.log("Upload response:", upload);
       if (upload?.success && upload.url) {
         {
-            setState("Attaching QR Code...");
-          const mappingUrl = await fetch(
+        setState("Attaching QR Code...");
+          const mappingUrl:any = await fetch(
             `https://okto-v2.vercel.app/qr/url-map`,
             {
               method: "POST",
@@ -51,9 +51,9 @@ export const createAndUploadCert = async ({
               }),
             }
           );
-          const mappedResponse = await mappingUrl.json();
-          if(!mappingUrl.ok) {
-            throw new Error("Failed to map URL for QR code");
+          const mappedResponse:any = await mappingUrl.json();
+          if(!mappingUrl.success) {
+            return setState("Failed to map URL to QR code");
           }
           if(mappedResponse.success) {
             console.log("Certificate uploaded successfully:", mappedResponse);

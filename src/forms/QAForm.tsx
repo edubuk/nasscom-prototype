@@ -245,28 +245,41 @@ const AssessmentResult = ({
   const [url, setUrl] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
   const userFormData = JSON.parse(localStorage.getItem("userFormData") || "{}");
+
+  function base64ToBlob(base64: string, contentType = "application/pdf") {
+  const byteCharacters = atob(base64); // Decode base64
+  const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) =>
+    byteCharacters.charCodeAt(i)
+  );
+  const byteArray = new Uint8Array(byteNumbers);
+  return new Blob([byteArray], { type: contentType });
+}
+
   const createAndUploadCert = async () => {
     try {
       setState("Generating certificate...");
       setLoading(true);
-      let response: any = await fetch("https://edubukcvonchain.com/generate", {
+      let res: any = await fetch("https://edubukcvonchain.com/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: userFormData.name,
-          certificate_type: `Successfully completed the session on 'CETA-${userFormData.topic} Module' by Edubuk in`,
+          certificate_type: `${userFormData.topic}`,
         }),
       });
-      response = await response.blob();
+      const data = await res.json();
+      console.log("Certificate ID:",data.cert_id);
+      const response = base64ToBlob(data.pdf_base64)
       const file = new File([response], "document.pdf", {
         type: "application/pdf",
       });
       const formData = new FormData();
       formData.append("file", file);
       console.log("Certificate response:", response);
-      if (response) {
+      if (data) {
+        const id = data.cert_id;
         setState("Uploading certificate...");
         let upload: any = await fetch(
           "https://okto-v2.vercel.app/file/upload",
@@ -279,8 +292,28 @@ const AssessmentResult = ({
         console.log("Upload response:", upload);
         if (upload?.success && upload.url) {
           setUrl(upload.url);
+          setState("Attaching QR Code...");
+          const mappingUrl:any = await fetch(
+            `https://okto-v2.vercel.app/qr/url-map`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                id,
+                url: upload.url,
+              }),
+            }
+          );
+          const mappedResponse:any = await mappingUrl.json();
+          console.log("Mapping URL response:", mappedResponse);
+          if(!mappedResponse.success) {
+            return setState("Failed to map URL to QR code");
+          }
+          if(mappedResponse.success) {
           setState("Registering certificate on blockchain...");
-          const certificateType = `CETA-${userFormData.topic} Module Completion Certificate`;
+          const certificateType = `${userFormData.topic}`;
           const txHash = await regCertificates({
             fileHash: upload.fileHashWithTimeStampExt,
             uri: upload.url,
@@ -291,6 +324,7 @@ const AssessmentResult = ({
             setTxHash(txHash);
           }
         }
+      }
       }
     } catch (error) {
       console.error("Error in creating and uploading certificate:", error);

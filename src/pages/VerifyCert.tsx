@@ -94,8 +94,8 @@ const VerifyCert: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center bg-white flex-col space-y-6">
-        <div className="mx-auto flex flex-col md:flex-row items-center gap-5 mt-5">
-            <Link to="/" className="absolute flex items-center gap-2 text-black hover:text-blue-800 left-2 border border-blue-600 rounded-lg px-3 py-2 transition-colors">
+        <div className="mx-auto flex flex-col items-center gap-5 mt-5">
+        <Link to="/" className="absolute flex items-center gap-2 text-black hover:text-blue-800 left-2 border border-blue-600 rounded-lg px-3 py-2 transition-colors">
         <MdArrowBack className="w-5 h-5" /> Back
         </Link>
         <img
@@ -103,10 +103,11 @@ const VerifyCert: React.FC = () => {
           alt="nasscom-logo"
           className="w-28 sm:w-32 lg:w-40 object-cover"
         />
-        <h1 className="text-2xl md:text-4xl lg:text-4xl tracking-tight text-center">
-          Developer Confluence Bangalore
-        </h1>
       </div>
+      <div className=" flex flex-col items-center justify-center w-full max-w-4xl p-6 shadow-lg rounded-lg bg-white ounded-xl gap-10 mb-10">
+      <h1 className="text-3xl bg-clip-text pb-2 text-transparent bg-gradient-to-t from-purple-400  to-slate-900 tracking-tighter font-semibold">
+              Developer Confluence Bangalore
+        </h1>
         <h1 className="text-3xl font-bold text-blue-800 mb-4 mt-10 ">Verify Your Certificate on Blockchain</h1>
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-4 text-center">Upload a File</h2>
@@ -177,6 +178,7 @@ const VerifyCert: React.FC = () => {
         <ExternalLink className="w-4 h-4" />
       </a>
     </div>}
+    </div>
     </div>
   );
 };
