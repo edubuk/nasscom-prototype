@@ -24,7 +24,8 @@ import {
   CybersecurityQuestions,
   GenAiQuestions,
 } from "@/data";
-import AddCertToLinkedIn from "@/pages/AddCertToLinkedIn";
+import { scrollToTop } from "@/lib/utils";
+import EdubukWaterMark from "@/components/EdubukWaterMark";
 // Sample questions data with correct answers
 
 // Create dynamic schema based on questions
@@ -121,6 +122,7 @@ const QAForm = ({
 
     console.log("Assessment Result:", result);
     console.log("Detailed Answers:", answers);
+    scrollToTop();
   }
 
   const resetAssessment = () => {
@@ -143,8 +145,8 @@ const QAForm = ({
 
   return (
     <div className="max-w-6xl mx-auto md:p-6">
-      <div className="my-6">
-        <h1 className="text-xl  lg:text-3xl font-bold tracking-tight mb-8">
+      <div className="my-6 md:my-0 md:mb-6">
+        <h1 className="text-xl  lg:text-3xl font-bold tracking-tight mb-8 text-center">
           Assessment Questions for {selectedTopic}
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-2">
@@ -218,7 +220,7 @@ const QAForm = ({
           <div className="flex justify-center pt-6">
             <Button
               onClick={form.handleSubmit(onSubmit)}
-              className="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+              className="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors cursor-pointer"
             >
               Submit Assessment
             </Button>
@@ -243,7 +245,7 @@ const AssessmentResult = ({
   return (
     <div className="w-full max-w-4xl mx-auto md:p-6">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-4">
+        <h1 className="text-xl lg:text-3xl mt-5 lg:mt-0 lg:font-bold tracking-tight mb-4">
           Assessment Results for {selectedTopic}
         </h1>
 
@@ -308,7 +310,7 @@ const AssessmentResult = ({
                 : `Unfortunately, you did not pass the assessment. You scored ${assessmentResult.percentage}%, but the passing criteria is 70%. Please  try again.`}
             </AlertDescription>
           </Alert>
-
+          <EdubukWaterMark />
           <div className="flex justify-center space-x-4">
             <Button
               onClick={resetAssessment}
@@ -327,7 +329,7 @@ const AssessmentResult = ({
               </Button>
             )}
           </div>
-          <div className="mt-5">
+          {/* <div className="mt-5">
             <AddCertToLinkedIn
               certName="Zero Trust Security Fundamentals"
               organizationId={82553446}
@@ -336,7 +338,7 @@ const AssessmentResult = ({
               certUrl="https://trucvstorage.blob.core.windows.net/uploads/0d632c162012e48f177071abcd37f8151771f55d4a357d3ce14e41268814cdee_1750752487.pdf"
               certId={7890}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

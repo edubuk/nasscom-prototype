@@ -11,13 +11,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { scrollToTop } from "@/lib/utils";
+import EdubukWaterMark from "@/components/EdubukWaterMark";
 
 const formSchema = z.object({
-  name: z.string({
-    required_error: "Name is required",
-  }),
+  name: z
+    .string({
+      required_error: "Name is required",
+    })
+    .min(1, {
+      message: "Name is required",
+    }),
   phone: z
     .string({
       required_error: "Phone number is required",
@@ -28,21 +34,33 @@ const formSchema = z.object({
     .max(10, {
       message: "Phone number must be less than 10 digits",
     }),
-  email: z.string({
-    required_error: "Email is required",
-  }),
+  email: z
+    .string({
+      required_error: "Email is required",
+    })
+    .email({
+      message: "Invalid email address",
+    }),
   topic: z.string({
     required_error: "Topic is required",
   }),
 });
 
+// const topics = [
+//   "AI",
+//   "Gen AI",
+//   "Agentic AI",
+//   "Blockchain",
+//   "Cybersecurity",
+//   "Cloud Computing",
+// ];
 const topics = [
-  "AI",
-  "Gen AI",
-  "Agentic AI",
-  "Blockchain",
-  "Cybersecurity",
-  "Cloud Computing",
+  { name: "AI", img: "/topics/ai.png" },
+  { name: "Gen AI", img: "/topics/gen-ai.png" },
+  { name: "Agentic AI", img: "/topics/agentic-ai.png" },
+  { name: "Blockchain", img: "/topics/blockchain.png" },
+  { name: "Cybersecurity", img: "/topics/cybersecurity.png" },
+  { name: "Cloud Computing", img: "/topics/cloudcomputing.png" },
 ];
 
 const UserForm = ({
@@ -54,6 +72,11 @@ const UserForm = ({
     resolver: zodResolver(formSchema),
   });
   const [selectedTopic, setSelectedTopic] = useState<string>("");
+
+  // const [userFormData, setUserFormData] = useState(
+  //   JSON.parse(localStorage.getItem("userFormData") || "{}")
+  // );
+  const userFormData = JSON.parse(localStorage.getItem("userFormData") || "{}");
   const nextClickHandler = async () => {
     const isValid = await form.trigger();
     console.log(isValid);
@@ -62,8 +85,17 @@ const UserForm = ({
       localStorage.setItem("userFormSubmited", JSON.stringify(true));
       localStorage.setItem("userFormData", JSON.stringify(form.getValues()));
       setIsFormSubmited(true);
+      scrollToTop();
     }
   };
+
+  useEffect(() => {
+    if (!userFormData) return;
+
+    // Explicitly cast `openning` to the expected type for `form.reset`
+    form.reset(userFormData as any);
+    setSelectedTopic(userFormData.topic);
+  }, []);
   console.log("form values", form.getValues());
   return (
     <>
@@ -71,7 +103,7 @@ const UserForm = ({
 
       {/* form component */}
       <Form {...form}>
-        <form className="space-y-8 mt-9">
+        <form className="space-y-8 mt-9 md:p-4">
           <div className="flex flex-col md:flex-row gap-5">
             <FormField
               control={form.control}
@@ -139,21 +171,25 @@ const UserForm = ({
                     Topic <span className="text-red-500"> *</span>
                   </FormLabel>
                   <FormControl>
-                    <div className=" flex flex-wrap  gap-5  justify-center">
+                    <div className="flex flex-wrap  gap-5  justify-center mt-2">
                       {topics.map((topic, i) => (
                         <div
                           key={i}
                           onClick={() => {
-                            setSelectedTopic(topic);
-                            form.setValue("topic", topic);
+                            setSelectedTopic(topic.name);
+                            form.setValue("topic", topic.name);
                           }}
                           className={twMerge(
-                            "max-w-28 md:max-w-44 w-full h-16 p-2 flex items-center justify-center border rounded-lg hover:bg-zinc-100/50 cursor-pointer text-center",
-                            topic === selectedTopic &&
+                            "max-w-32 md:max-w-44 w-full  p-2 flex items-center justify-center border rounded-lg hover:bg-zinc-100/50 cursor-pointer text-center shadow-md",
+                            topic.name === selectedTopic &&
                               "bg-green-500/10 border-green-500 hover:bg-green-500/10"
                           )}
                         >
-                          {topic}
+                          <img
+                            src={topic.img}
+                            alt="topic"
+                            className="w-full rounded-md select-none pointer-events-none"
+                          />
                         </div>
                       ))}
                     </div>
@@ -164,12 +200,12 @@ const UserForm = ({
               )}
             />
           </div>
-
-          <div className="px-20">
+          <EdubukWaterMark />
+          <div className="md:px-20">
             <Button
               type="button"
               onClick={nextClickHandler}
-              className="w-full border border-white/25  font-poppins text-base bg-zinc-100/80 text-black hover:bg-opacity-90 cursor-pointer"
+              className="w-full border border-white/25   text-base  cursor-pointer"
             >
               Next
             </Button>
