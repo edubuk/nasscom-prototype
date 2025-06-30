@@ -31,7 +31,7 @@ const AddCertToLinkedIn = ({
   }
 
   return (
-    <Button className="border text-white  p-3 rounded-lg px-5 bg-sky-700 hover:bg-sky-600 cursor-pointer">
+    <Button className="border text-white  py-6 rounded-lg px-5 bg-sky-700 hover:bg-sky-600 cursor-pointer">
       <a
         href={url}
         target="_blank"
@@ -40,7 +40,7 @@ const AddCertToLinkedIn = ({
       >
         <TiSocialLinkedin className="mr-2 size-8" />
 
-        <span className="text-lg">Add to LinkedIn</span>
+        <span className="text-lg">Add Certificate to LinkedIn</span>
       </a>
     </Button>
   );

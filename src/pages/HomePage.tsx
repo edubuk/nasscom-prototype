@@ -5,18 +5,14 @@ import { twMerge } from "tailwind-merge";
 import nasscomImage from "@/assets/nasscom-logo.svg";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { Button } from "@/components/ui/button";
-import AddCertToLinkedIn from "./AddCertToLinkedIn";
-import RegisterOnBlockchain from "./RegisterOnBlockchain";
+
 
 const HomePage = () => {
   const [userFormSubmited, setUserFormSubmited] = useState<boolean>(
     JSON.parse(localStorage.getItem("userFormSubmited") || "false")
   );
   // TODO: AJEET SIR;
-  const storeOnBlockchain = () => {
-    // TODO: store on blockchain integrations and linkdein may be
-    console.log("HEY SUBMITTED AND RESULTS STORED ON BLOCKCHAIN");
-  };
+
   return (
     <div className="w-full flex flex-col items-center pt-5">
       <div className="mx-auto flex flex-col md:flex-row items-center gap-5 mb-5">
@@ -51,20 +47,12 @@ const HomePage = () => {
         {!userFormSubmited ? (
           <UserForm setIsFormSubmited={setUserFormSubmited} />
         ) : (
-          <QAForm storeOnBlockchainHandler={storeOnBlockchain} />
+          <QAForm />
         )}
       </div>
 
       {/* certificate component */}
-      <AddCertToLinkedIn
-  certName="Testing Add Profile"
-  organizationId={82553446}
-  issueYear={2024}
-  issueMonth={6}
-  certUrl="https://trucvstorage.blob.core.windows.net/uploads/0d632c162012e48f177071abcd37f8151771f55d4a357d3ce14e41268814cdee_1750752487.pdf"
-  certId={7890}
-/>
-<RegisterOnBlockchain />
+
     </div>
   );
 };

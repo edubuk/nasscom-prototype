@@ -15,6 +15,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CheckCircle, XCircle } from "lucide-react";
+import {LuArrowUpRight} from "react-icons/lu";
 import { SelectDropDown } from "@/components/SelectDropDown";
 import {
   AiQuestions,
@@ -26,6 +27,10 @@ import {
 } from "@/data";
 import { scrollToTop } from "@/lib/utils";
 import EdubukWaterMark from "@/components/EdubukWaterMark";
+import DataPage from "@/pages/DataPage";
+import { regCertificates } from "@/pages/RegisterOnBlockchain";
+import AddCertToLinkedIn from "@/pages/AddCertToLinkedIn";
+import { Link } from "react-router-dom";
 // Sample questions data with correct answers
 
 // Create dynamic schema based on questions
@@ -39,11 +44,7 @@ const createFormSchema = (questions: any[]) => {
   return z.object(schemaObject);
 };
 
-const QAForm = ({
-  storeOnBlockchainHandler,
-}: {
-  storeOnBlockchainHandler: () => void;
-}) => {
+const QAForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<string>(
     JSON.parse(localStorage.getItem("userFormData") || "{}").topic
@@ -137,7 +138,6 @@ const QAForm = ({
       <AssessmentResult
         assessmentResult={assessmentResult}
         selectedTopic={selectedTopic}
-        storeOnBlockchainHandler={storeOnBlockchainHandler}
         resetAssessment={resetAssessment}
       />
     );
@@ -234,113 +234,187 @@ const QAForm = ({
 const AssessmentResult = ({
   assessmentResult,
   selectedTopic,
-  storeOnBlockchainHandler,
   resetAssessment,
 }: {
   assessmentResult: any;
   selectedTopic: string;
-  storeOnBlockchainHandler: () => void;
   resetAssessment: () => void;
 }) => {
+  const [dataStatus, setState] = useState("Process started...");
+  const [loading, setLoading] = useState(false);
+  const [url, setUrl] = useState<string>("");
+  const [txHash, setTxHash] = useState<string>("");
+  const userFormData = JSON.parse(localStorage.getItem("userFormData") || "{}");
+  const createAndUploadCert = async () => {
+    try {
+      setState("Generating certificate...");
+      setLoading(true);
+      let response: any = await fetch("https://edubukcvonchain.com/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: userFormData.name,
+          certificate_type: `Successfully completed the session on 'CETA-${userFormData.topic} Module' by Edubuk in`,
+        }),
+      });
+      response = await response.blob();
+      const file = new File([response], "document.pdf", {
+        type: "application/pdf",
+      });
+      const formData = new FormData();
+      formData.append("file", file);
+      console.log("Certificate response:", response);
+      if (response) {
+        setState("Uploading certificate...");
+        let upload: any = await fetch(
+          "https://okto-v2.vercel.app/file/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        upload = await upload.json();
+        console.log("Upload response:", upload);
+        if (upload?.success && upload.url) {
+          setUrl(upload.url);
+          setState("Registering certificate on blockchain...");
+          const certificateType = `CETA-${userFormData.topic} Module Completion Certificate`;
+          const txHash = await regCertificates({
+            fileHash: upload.fileHashWithTimeStampExt,
+            uri: upload.url,
+            name: userFormData.name,
+            certificateType: certificateType,
+          });
+          if (txHash) {
+            setTxHash(txHash);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error in creating and uploading certificate:", error);
+      console.log("Error in creating and uploading certificate:", error);
+      setLoading(false);
+      setState("Error in generating certificate. Please try again later.");
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto md:p-6">
-      <div className="text-center mb-8">
-        <h1 className="text-xl lg:text-3xl mt-5 lg:mt-0 lg:font-bold tracking-tight mb-4">
-          Assessment Results for {selectedTopic}
-        </h1>
+      {!loading && !txHash && (
+        <div className="text-center mb-8">
+          <h1 className="text-xl lg:text-3xl mt-5 lg:mt-0 lg:font-bold tracking-tight mb-4">
+            Assessment Results for {selectedTopic}
+          </h1>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-center mb-6">
-            {assessmentResult.passed ? (
-              <CheckCircle className="w-16 h-16 text-green-500 mr-4" />
-            ) : (
-              <XCircle className="w-16 h-16 text-red-500 mr-4" />
-            )}
-            <div className="text-left">
-              <h2
-                className={`text-2xl font-bold ${
-                  assessmentResult.passed ? "text-green-600" : "text-red-600"
-                }`}
+          <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+            <div className="flex items-center justify-center mb-6">
+              {assessmentResult.passed ? (
+                <CheckCircle className="w-16 h-16 text-green-500 mr-4" />
+              ) : (
+                <XCircle className="w-16 h-16 text-red-500 mr-4" />
+              )}
+              <div className="text-left">
+                <h2
+                  className={`text-2xl font-bold ${
+                    assessmentResult.passed ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {assessmentResult.passed ? "PASSED" : "FAILED"}
+                </h2>
+                <p className="text-gray-600 text-lg">
+                  Score: {assessmentResult.correctAnswers}/
+                  {assessmentResult.totalQuestions}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-blue-50 p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-blue-600">
+                  {assessmentResult.percentage}%
+                </div>
+                <div className="text-sm text-gray-600">Percentage</div>
+              </div>
+              <div className="bg-green-50 p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {assessmentResult.correctAnswers}
+                </div>
+                <div className="text-sm text-gray-600">Correct Answers</div>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-gray-600">
+                  {assessmentResult.totalQuestions -
+                    assessmentResult.correctAnswers}
+                </div>
+                <div className="text-sm text-gray-600">Incorrect Answers</div>
+              </div>
+            </div>
+
+            <Alert
+              className={`mb-6 ${
+                assessmentResult.passed
+                  ? "border-green-200 bg-green-50"
+                  : "border-red-200 bg-red-50"
+              }`}
+            >
+              <AlertDescription
+                className={
+                  assessmentResult.passed ? "text-green-800" : "text-red-800"
+                }
               >
-                {assessmentResult.passed ? "PASSED" : "FAILED"}
-              </h2>
-              <p className="text-gray-600 text-lg">
-                Score: {assessmentResult.correctAnswers}/
-                {assessmentResult.totalQuestions}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-blue-50 p-4 rounded-lg text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {assessmentResult.percentage}%
-              </div>
-              <div className="text-sm text-gray-600">Percentage</div>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {assessmentResult.correctAnswers}
-              </div>
-              <div className="text-sm text-gray-600">Correct Answers</div>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg text-center">
-              <div className="text-2xl font-bold text-gray-600">
-                {assessmentResult.totalQuestions -
-                  assessmentResult.correctAnswers}
-              </div>
-              <div className="text-sm text-gray-600">Incorrect Answers</div>
-            </div>
-          </div>
-
-          <Alert
-            className={`mb-6 ${
-              assessmentResult.passed
-                ? "border-green-200 bg-green-50"
-                : "border-red-200 bg-red-50"
-            }`}
-          >
-            <AlertDescription
-              className={
-                assessmentResult.passed ? "text-green-800" : "text-red-800"
-              }
-            >
-              {assessmentResult.passed
-                ? `Congratulations! You have successfully passed the assessment with ${assessmentResult.percentage}%. The passing criteria was 70%.`
-                : `Unfortunately, you did not pass the assessment. You scored ${assessmentResult.percentage}%, but the passing criteria is 70%. Please  try again.`}
-            </AlertDescription>
-          </Alert>
-          <EdubukWaterMark />
-          <div className="flex justify-center space-x-4">
-            <Button
-              onClick={resetAssessment}
-              variant="outline"
-              className="px-6 py-2"
-            >
-              Retake Assessment
-            </Button>
-
-            {assessmentResult.passed && (
+                {assessmentResult.passed
+                  ? `Congratulations! You have successfully passed the assessment with ${assessmentResult.percentage}%. The passing criteria was 70%.`
+                  : `Unfortunately, you did not pass the assessment. You scored ${assessmentResult.percentage}%, but the passing criteria is 70%. Please  try again.`}
+              </AlertDescription>
+            </Alert>
+            <EdubukWaterMark />
+            <div className="flex justify-center space-x-4">
               <Button
-                onClick={storeOnBlockchainHandler}
-                className="px-6 py-2 bg-green-600 hover:bg-green-700 cursor-pointer"
+                onClick={resetAssessment}
+                variant="outline"
+                className="px-6 py-2"
               >
-                Submit result
+                Retake Assessment
               </Button>
-            )}
+
+              {assessmentResult.passed && (
+                <Button
+                  onClick={createAndUploadCert}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 cursor-pointer"
+                >
+                  Submit result
+                </Button>
+              )}
+            </div>
           </div>
-          {/* <div className="mt-5">
-            <AddCertToLinkedIn
-              certName="Zero Trust Security Fundamentals"
-              organizationId={82553446}
-              issueYear={2024}
-              issueMonth={6}
-              certUrl="https://trucvstorage.blob.core.windows.net/uploads/0d632c162012e48f177071abcd37f8151771f55d4a357d3ce14e41268814cdee_1750752487.pdf"
-              certId={7890}
-            />
-          </div> */}
         </div>
-      </div>
+      )}
+      {loading && !txHash && <DataPage dataStatus={dataStatus} />}
+      {txHash && (
+        <div className="flex flex-col items-center justify-center h-[65vh] gap-10">
+        <div className="flex justify-center items-center gap-10">
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 py-3 px-3 border-1 border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            View Certificate
+          </a>
+          <AddCertToLinkedIn
+            certName={`CETA-${userFormData.topic} Module Completion Certificate`}
+            organizationId={82553446}
+            issueYear={2024}
+            issueMonth={6}
+            certUrl={url}
+            certId={7890}
+          />
+          </div>
+          <Link to="/verify-cert" className="flex justify-center items-center text-blue-600 underline">Would you like to verify your certificate on Blockchain <LuArrowUpRight className="w-5 h-5"/></Link>
+        </div>
+      )}
     </div>
   );
 };
