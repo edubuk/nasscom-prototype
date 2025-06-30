@@ -145,7 +145,7 @@ const QAForm = ({
 
   return (
     <div className="max-w-6xl mx-auto md:p-6">
-      <div className="mb-6">
+      <div className="my-6 md:my-0 md:mb-6">
         <h1 className="text-xl  lg:text-3xl font-bold tracking-tight mb-8 text-center">
           Assessment Questions for {selectedTopic}
         </h1>

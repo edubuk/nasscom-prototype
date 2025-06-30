@@ -16,7 +16,7 @@ const HomePage = () => {
   };
   return (
     <div className="w-full flex flex-col items-center pt-0">
-      <div className="mx-auto mt-2 flex flex-col  items-center gap-5 mb-2">
+      <div className="mx-auto mt-2 flex flex-col  items-center gap-5 md:mb-2">
         <img
           src={nasscomImage}
           alt="nasscom-logo"
@@ -26,14 +26,14 @@ const HomePage = () => {
 
       <div
         className={twMerge(
-          "mt-5 md:mt-0 md:border-t w-full rounded-xl shadow-lg p-6 mb-10 ",
+          "mt-2 md:mt-0 md:border-t w-full rounded-xl shadow-lg p-6 mb-10 ",
           userFormSubmited ? "max-w-6xl" : "max-w-5xl"
         )}
       >
-        <div className="w-full  flex flex-col items-center justify-center overflow-hidden rounded-md">
+        <div className="w-full  flex flex-col items-center justify-center overflow-hidden rounded-md mb-5 lg:mb-0">
           <div
             className={twMerge(
-              "text-4xl md:text-5xl md:max-w-xl lg:text-4xl lg:max-w-4xl mx-auto text-center",
+              "text-2xl md:text-3xl md:max-w-xl lg:text-4xl lg:max-w-4xl mx-auto text-center",
               ""
             )}
           >
